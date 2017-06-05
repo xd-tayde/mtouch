@@ -595,7 +595,7 @@ new MTouch({
 
 function set($el, transform) {
     window.requestAnimFrame(function () {
-        $el.css('transform', 'translate(' + transform.x + 'px,' + transform.y + 'px) rotate(' + transform.rotate + 'deg) scale(' + transform.scale + ')');
+        $el.css('transform', 'translate3d(' + transform.x + 'px,' + transform.y + 'px,0px) rotate(' + transform.rotate + 'deg) scale(' + transform.scale + ')');
     });
 }
 

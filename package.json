@@ -15,7 +15,7 @@
     "lint": "eslint src"
   },
   "repository": {
-    "url": "https://gitlab.meitu.com/npm/mtouch.git",
+    "url": "https://gitlab.meitu.com/npm/meitu-mtouch.git",
     "type": "git"
   },
   "author": "gxd <gxd@meitu.com>",
