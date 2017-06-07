@@ -178,6 +178,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var EVENT = ['touchstart', 'touchmove', 'touchend', 'drag', 'dragstart', 'dragend', 'pinch', 'pinchstart', 'pinchend', 'rotate', 'rotatestart', 'rotatend'];
 
+var ORIGINEVENT = ['touchstart', 'touchmove', 'touchend', 'touchcancel'];
+
 var MTouch = function () {
     function MTouch(options) {
         _classCallCheck(this, MTouch);
@@ -286,9 +288,21 @@ var MTouch = function () {
         value: function bind() {
             var _this2 = this;
 
-            ['touchstart', 'touchmove', 'touchend', 'touchcancel'].forEach(function (evName) {
+            ORIGINEVENT.forEach(function (evName) {
                 var fn = evName == 'touchcancel' ? 'end' : evName.replace('touch', '');
-                _this2.receiver.addEventListener(evName, _this2[fn].bind(_this2), false);
+                // 需要存下 bind(this) 后的函数指向，用于 destroy;
+                _this2[fn + 'bind'] = _this2[fn].bind(_this2);
+                _this2.receiver.addEventListener(evName, _this2[fn + 'bind'], false);
+            });
+        }
+    }, {
+        key: 'destroy',
+        value: function destroy() {
+            var _this3 = this;
+
+            ORIGINEVENT.forEach(function (evName) {
+                var fn = evName == 'touchcancel' ? 'end' : evName.replace('touch', '');
+                _this3.receiver.removeEventListener(evName, _this3[fn + 'bind'], false);
             });
         }
     }, {
@@ -413,12 +427,12 @@ var MTouch = function () {
     }, {
         key: 'end',
         value: function end(ev) {
-            var _this3 = this;
+            var _this4 = this;
 
             if (!ev.touches && ev.type !== 'touchend' && ev.type !== 'touchcancel') return;
 
             ['pinch', 'drag', 'rotate', 'singleRotate', 'singlePinch'].forEach(function (evName) {
-                _this3.eventEnd(evName, {
+                _this4.eventEnd(evName, {
                     origin: ev
                 });
             });

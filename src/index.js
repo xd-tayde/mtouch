@@ -15,6 +15,14 @@ const EVENT = [
     'rotatestart',
     'rotatend',
 ];
+
+const ORIGINEVENT = [
+    'touchstart',
+    'touchmove',
+    'touchend',
+    'touchcancel',
+];
+
 export default class MTouch {
     constructor(options) {
         this.ops = {
@@ -84,6 +92,7 @@ export default class MTouch {
             this.operator = this.receiver;
         }
 
+
         // touch状态；
         this.fingers = 0;
         // 初始状态;
@@ -112,9 +121,17 @@ export default class MTouch {
         this.singleRotatend = new HandlerBus(this.receiver).add(this.ops.singleRotate.end || function(){});
     }
     bind() {
-        ['touchstart', 'touchmove', 'touchend', 'touchcancel'].forEach(evName => {
+        ORIGINEVENT.forEach(evName => {
             let fn = evName == 'touchcancel'? 'end': evName.replace('touch', '');
-            this.receiver.addEventListener(evName, this[fn].bind(this), false);
+            // 需要存下 bind(this) 后的函数指向，用于 destroy;
+            this[fn+'bind'] = this[fn].bind(this);
+            this.receiver.addEventListener(evName, this[fn+'bind'], false);
+        });
+    }
+    destroy(){
+        ORIGINEVENT.forEach(evName => {
+            let fn = evName == 'touchcancel'? 'end': evName.replace('touch', '');
+            this.receiver.removeEventListener(evName, this[fn+'bind'], false);
         });
     }
     start(ev) {
