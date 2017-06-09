@@ -17,14 +17,21 @@ let $drag = $('.js-drag-el');
 let wrap = document.querySelector('.js-area');
 let wrapRect = wrap.getBoundingClientRect();
 let elRect = $drag[0].getBoundingClientRect();
-new MTouch({
-    receiver:'.js-drag-el',
-    drag(ev){
-        dragTrans.x += ev.delta.deltaX;
-        dragTrans.y += ev.delta.deltaY;
-        set($drag,limit(wrap,$drag[0],dragTrans));
-    },
+// new MTouch({
+//     receiver:'.js-drag-el',
+//     drag(ev){
+//         dragTrans.x += ev.delta.deltaX;
+//         dragTrans.y += ev.delta.deltaY;
+//         set($drag,limit(wrap,$drag[0],dragTrans));
+//     },
+// });
+MTouch('.js-area').on('drag',(ev)=>{
+    dragTrans.x += ev.delta.deltaX;
+    dragTrans.y += ev.delta.deltaY;
+    set($drag,limit(wrap,$drag[0],dragTrans));
 });
+// console.log(touch);
+
 function limit(wrap,el,trans){
     let bounce = 40;
     let minX = - el.offsetLeft - bounce;
@@ -69,7 +76,6 @@ new MTouch({
         set($rotate,rotateTrans);
     },
 });
-
 // singlePinch;
 let singlePinchTrans = {
     x:0,

@@ -116,4 +116,10 @@ export default {
         };
         return trans;
     },
+    getUseName(evName){
+        let useName = evName.replace('start','');
+        let end = useName.indexOf('rotate') !== -1 ? 'nd' : 'end';
+        useName = useName.replace(end,'');
+        return useName;
+    },
 };

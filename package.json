@@ -1,6 +1,6 @@
 {
   "name": "@meitu/mtouch",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Mobile Touch Library",
   "main": "dist/mtouch.js",
   "module": "dist/mtouch.es.js",

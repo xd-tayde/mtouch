@@ -1,4 +1,4 @@
-# MTouch通用移动端手势库2.1.0
+# MTouch通用移动端手势库2.2.0
 
 > [demo](http://f2er.meitu.com/gxd/mtouch/example/index.html)
 
@@ -9,6 +9,11 @@
 > [docs](http://f2er.meitu.com/docs/#/mtouch/)
 
 ### 更新
+
+2.2版本
+
+> 新增直接执行函数的使用方式，修改构造函数的方式；
+> 新增初始化参数的多态判断，可直接使用字符串传入 receiver 与 operator;
 
 2.1版本
 
@@ -180,6 +185,15 @@ new MTouch({
 })
 ```
 
+```js
+// 也可直接使用函数调用；
+// receiver: 接收器 selector 必需；
+// operator: 操作器 selector 可选； 用于单指操作；
+MTouch(receiver,operator).on(evName,(ev)=>{
+    console.log(ev);
+});
+```
+
 #### 使用方式；
 
 通过 `ev.delta` 暴露的运动增量来进行元素的操作；
@@ -204,6 +218,14 @@ new MTouch({
                 `translate3d(${transform.x}px,${transform.y}px,0px) scale(${transform.scale}) rotate(${transform.rotate}deg)`);
     }
 })
+// 或者
+MTouch('selector','selector').on('drag',(ev)=>{
+    transform.x += ev.deltaX;
+    transform.y += ev.deltaY;
+
+    $(el).css('transform',
+            `translate3d(${transform.x}px,${transform.y}px,0px) scale(${transform.scale}) rotate(${transform.rotate}deg)`);
+});
 
 ```
 
