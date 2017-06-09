@@ -33,28 +33,28 @@ export default {
             y = offset.top + el.getBoundingClientRect().width / 2;
         return {x: Math.round(x), y: Math.round(y)};
     },
-    setPos(el, transform) {
-        let str = JSON.stringify(transform);
-        let value = `translate3d(${transform.x}px,${transform.y}px,0px) scale(${transform.scale}) rotate(${transform.rotate}deg)`;
-        el = typeof el == 'string'? document.querySelector(el): el;
-        el.style.transform = value;
-        el.setAttribute('data-mtouch-status', str);
-    },
-    getPos(el) {
-        let defaulTrans;
-        let cssTrans = window.getComputedStyle(el,null).transform;
-        if(window.getComputedStyle && cssTrans !== 'none'){
-            defaulTrans = this.matrixTo(cssTrans);
-        }else{
-            defaulTrans = {
-                x: 0,
-                y: 0,
-                scale: 1,
-                rotate: 0,
-            };
-        }
-        return JSON.parse(el.getAttribute('data-mtouch-status')) || defaulTrans;
-    },
+    // setPos(el, transform) {
+    //     let str = JSON.stringify(transform);
+    //     let value = `translate3d(${transform.x}px,${transform.y}px,0px) scale(${transform.scale}) rotate(${transform.rotate}deg)`;
+    //     el = typeof el == 'string'? document.querySelector(el): el;
+    //     el.style.transform = value;
+    //     el.setAttribute('data-mtouch-status', str);
+    // },
+    // getPos(el) {
+    //     let defaulTrans;
+    //     let cssTrans = window.getComputedStyle(el,null).transform;
+    //     if(window.getComputedStyle && cssTrans !== 'none'){
+    //         defaulTrans = this.matrixTo(cssTrans);
+    //     }else{
+    //         defaulTrans = {
+    //             x: 0,
+    //             y: 0,
+    //             scale: 1,
+    //             rotate: 0,
+    //         };
+    //     }
+    //     return JSON.parse(el.getAttribute('data-mtouch-status')) || defaulTrans;
+    // },
     extend(obj1, obj2) {
         for (let k in obj2) {
             if (obj2.hasOwnProperty(k)) {

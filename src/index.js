@@ -1,41 +1,25 @@
 import _ from './utils';
 import HandlerBus from './handlerBus';
 
-const EVENT = [
-    'touchstart',
-    'touchmove',
-    'touchend',
-    'drag',
-    'dragstart',
-    'dragend',
-    'pinch',
-    'pinchstart',
-    'pinchend',
-    'rotate',
-    'rotatestart',
-    'rotatend',
-];
+const EVENT = ['touchstart','touchmove','touchend','drag','dragstart','dragend','pinch','pinchstart','pinchend','rotate','rotatestart','rotatend'];
 
-const ORIGINEVENT = [
-    'touchstart',
-    'touchmove',
-    'touchend',
-    'touchcancel',
-];
+const ORIGINEVENT = ['touchstart', 'touchmove', 'touchend', 'touchcancel'];
 
-export default function MTouch(config,operator){
+export default function MTouch(config, operator) {
+
     // 兼容不使用 new 的方式；
-    if(!(this instanceof MTouch))return new MTouch(config,operator);
+    if (!(this instanceof MTouch))
+        return new MTouch(config, operator);
 
-    let options;
     // options 多态；
-    if(typeof config === 'string'){
+    let options;
+    if (typeof config === 'string') {
         options = {};
         options.receiver = config;
-        if(operator){
+        if (operator) {
             options.operator = operator;
         }
-    }else if(typeof config === 'object'){
+    } else if (typeof config === 'object') {
         options = config;
     }
 
@@ -61,18 +45,18 @@ export default function MTouch(config,operator){
         rotatestart() {},
         rotatend() {},
 
-        singlePinch:{
-            start(){},
-            pinch(){},
-            end(){},
-            buttonId:null,
+        singlePinch: {
+            start() {},
+            pinch() {},
+            end() {},
+            buttonId: null,
         },
 
-        singleRotate:{
-            start(){},
-            rotate(){},
-            end(){},
-            buttonId:null,
+        singleRotate: {
+            start() {},
+            rotate() {},
+            end() {},
+            buttonId: null,
         },
     };
 
@@ -88,7 +72,7 @@ export default function MTouch(config,operator){
     this.ops = _.extend(this.ops, options);
 
     // receiver test;
-    if(!this.ops.receiver || typeof this.ops.receiver !== 'string'){
+    if (!this.ops.receiver || typeof this.ops.receiver !== 'string') {
         console.error('receiver error,there must be a receiver-selector');
         return;
     }
@@ -97,7 +81,7 @@ export default function MTouch(config,operator){
 
     // 事件操纵器；
     if (this.ops.operator) {
-        if(typeof this.ops.operator !== 'string'){
+        if (typeof this.ops.operator !== 'string') {
             console.error('operator error, the operator param must be a selector');
             return;
         }
@@ -122,30 +106,32 @@ export default function MTouch(config,operator){
     this.bind();
 }
 
-MTouch.prototype.driveBus = function(){
+MTouch.prototype.driveBus = function() {
     EVENT.forEach(eventName => {
-        this[eventName] = new HandlerBus(this.receiver).add(this.ops[eventName] || function(){});
+        this[eventName] = new HandlerBus(this.receiver).add(this.ops[eventName] || function() {});
     });
-    this.singlePinchstart = new HandlerBus(this.receiver).add(this.ops.singlePinch.start || function(){});
-    this.singlePinch = new HandlerBus(this.receiver).add(this.ops.singlePinch.pinch || function(){});
-    this.singlePinchend = new HandlerBus(this.receiver).add(this.ops.singlePinch.end || function(){});
-    this.singleRotatestart = new HandlerBus(this.receiver).add(this.ops.singleRotate.start || function(){});
-    this.singleRotate = new HandlerBus(this.receiver).add(this.ops.singleRotate.rotate || function(){});
-    this.singleRotatend = new HandlerBus(this.receiver).add(this.ops.singleRotate.end || function(){});
+    this.singlePinchstart = new HandlerBus(this.receiver).add(this.ops.singlePinch.start || function() {});
+    this.singlePinch = new HandlerBus(this.receiver).add(this.ops.singlePinch.pinch || function() {});
+    this.singlePinchend = new HandlerBus(this.receiver).add(this.ops.singlePinch.end || function() {});
+    this.singleRotatestart = new HandlerBus(this.receiver).add(this.ops.singleRotate.start || function() {});
+    this.singleRotate = new HandlerBus(this.receiver).add(this.ops.singleRotate.rotate || function() {});
+    this.singleRotatend = new HandlerBus(this.receiver).add(this.ops.singleRotate.end || function() {});
 };
 
 MTouch.prototype.bind = function() {
     ORIGINEVENT.forEach(evName => {
         let fn = evName == 'touchcancel'? 'end': evName.replace('touch', '');
         // 需要存下 bind(this) 后的函数指向，用于 destroy;
-        this[fn+'bind'] = this[fn].bind(this);
-        this.receiver.addEventListener(evName, this[fn+'bind'], false);
+        this[fn + '_bind'] = this[fn].bind(this);
+        this.receiver.addEventListener(evName, this[fn + '_bind'], false);
     });
 };
-MTouch.prototype.destroy = function(){
+MTouch.prototype.destroy = function() {
     ORIGINEVENT.forEach(evName => {
-        let fn = evName == 'touchcancel'? 'end': evName.replace('touch', '');
-        this.receiver.removeEventListener(evName, this[fn+'bind'], false);
+        let fn = evName == 'touchcancel'
+            ? 'end'
+            : evName.replace('touch', '');
+        this.receiver.removeEventListener(evName, this[fn + '_bind'], false);
     });
 };
 MTouch.prototype.start = function(ev) {
@@ -164,16 +150,13 @@ MTouch.prototype.start = function(ev) {
         this.singlePinchStartLength = _.getLength(pinchV1);
     }
 
-    this.touchstart.fire({
-        origin : ev,
-        eventType:'touchstart',
-    });
+    this.touchstart.fire({origin: ev, eventType: 'touchstart'});
 };
 MTouch.prototype.move = function(ev) {
     if (!ev.touches || ev.type !== 'touchmove')return;
-    let curPoint = _.getPoint(ev, 0);
-    let curFingers = ev.touches.length;
-    let rotateV1,
+    let curPoint = _.getPoint(ev, 0),
+        curFingers = ev.touches.length,
+        rotateV1,
         rotateV2,
         pinchV2,
         pinchLength,
@@ -197,26 +180,26 @@ MTouch.prototype.move = function(ev) {
 
     // 双指时，需触发pinch和rotate事件；
     if (curFingers > 1) {
-        let curSecPoint = _.getPoint(ev, 1);
-        let vector2 = _.getVector(curSecPoint, curPoint);
+        let curSecPoint = _.getPoint(ev, 1),
+            vector2 = _.getVector(curSecPoint, curPoint);
         // pinch
         if (this.use.pinch) {
             pinchLength = _.getLength(vector2);
             this.eventFire('pinch', {
-                delta:{
+                delta: {
                     scale: pinchLength / this.pinchStartLength,
                 },
-                origin:ev,
+                origin: ev,
             });
             this.pinchStartLength = pinchLength;
         }
         // rotate
         if (this.use.rotate) {
             this.eventFire('rotate', {
-                delta:{
+                delta: {
                     rotate: _.getAngle(this.vector1, vector2),
                 },
-                origin:ev,
+                origin: ev,
             });
             this.vector1 = vector2;
         }
@@ -226,10 +209,10 @@ MTouch.prototype.move = function(ev) {
             pinchV2 = _.getVector(curPoint, this.singleBasePoint);
             singlePinchLength = _.getLength(pinchV2);
             this.eventFire('singlePinch', {
-                delta:{
+                delta: {
                     scale: singlePinchLength / this.singlePinchStartLength,
                 },
-                origin:ev,
+                origin: ev,
             });
             this.singlePinchStartLength = singlePinchLength;
         }
@@ -238,44 +221,34 @@ MTouch.prototype.move = function(ev) {
             rotateV1 = _.getVector(this.startPoint, this.singleBasePoint);
             rotateV2 = _.getVector(curPoint, this.singleBasePoint);
             this.eventFire('singleRotate', {
-                delta:{
+                delta: {
                     rotate: _.getAngle(rotateV1, rotateV2),
                 },
-                origin:ev,
+                origin: ev,
             });
         }
     }
     if (this.use.drag) {
         if (ev.target.id !== this.ops.singlePinch.buttonId && ev.target.id !== this.ops.singleRotate.buttonId) {
             this.eventFire('drag', {
-                delta:{
+                delta: {
                     deltaX: curPoint.x - this.startPoint.x,
                     deltaY: curPoint.y - this.startPoint.y,
                 },
-                origin:ev,
+                origin: ev,
             });
         }
     }
     this.startPoint = curPoint;
-    this.touchmove.fire({
-        eventType:'touchmove',
-        origin:ev,
-    });
+    this.touchmove.fire({eventType: 'touchmove', origin: ev});
     ev.preventDefault();
 };
 MTouch.prototype.end = function(ev) {
-    if (!ev.touches && ev.type !== 'touchend' && ev.type !== 'touchcancel')
-        return;
-
+    if (!ev.touches && ev.type !== 'touchend' && ev.type !== 'touchcancel')return;
     ['pinch', 'drag', 'rotate', 'singleRotate', 'singlePinch'].forEach(evName => {
-        this.eventEnd(evName, {
-            origin:ev,
-        });
+        this.eventEnd(evName, {origin: ev});
     });
-    this.touchend.fire({
-        eventType:'touchend',
-        origin:ev,
-    });
+    this.touchend.fire({eventType: 'touchend', origin: ev});
 };
 MTouch.prototype.eventFire = function(evName, ev) {
     let ing = `${evName}ing`;
@@ -290,8 +263,8 @@ MTouch.prototype.eventFire = function(evName, ev) {
     }
 };
 MTouch.prototype.eventEnd = function(evName, ev) {
-    let ing = `${evName}ing`;
-    let end;
+    let ing = `${evName}ing`,
+        end;
     if (evName == 'rotate' || evName == 'singleRotate') {
         end = `${evName}nd`;
     } else {
@@ -307,7 +280,7 @@ MTouch.prototype.switchOperator = function(el) {
     this.operator = el;
 };
 MTouch.prototype.on = function(evName, handler) {
-    this.use[ _.getUseName(evName) ] = true;
+    this.use[_.getUseName(evName)] = true;
     this[evName].add(handler);
 };
 MTouch.prototype.off = function(evName, handler) {

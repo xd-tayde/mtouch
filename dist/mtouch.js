@@ -42,28 +42,29 @@ var _ = {
             y = offset.top + el.getBoundingClientRect().width / 2;
         return { x: Math.round(x), y: Math.round(y) };
     },
-    setPos: function setPos(el, transform) {
-        var str = JSON.stringify(transform);
-        var value = 'translate3d(' + transform.x + 'px,' + transform.y + 'px,0px) scale(' + transform.scale + ') rotate(' + transform.rotate + 'deg)';
-        el = typeof el == 'string' ? document.querySelector(el) : el;
-        el.style.transform = value;
-        el.setAttribute('data-mtouch-status', str);
-    },
-    getPos: function getPos(el) {
-        var defaulTrans = void 0;
-        var cssTrans = window.getComputedStyle(el, null).transform;
-        if (window.getComputedStyle && cssTrans !== 'none') {
-            defaulTrans = this.matrixTo(cssTrans);
-        } else {
-            defaulTrans = {
-                x: 0,
-                y: 0,
-                scale: 1,
-                rotate: 0
-            };
-        }
-        return JSON.parse(el.getAttribute('data-mtouch-status')) || defaulTrans;
-    },
+
+    // setPos(el, transform) {
+    //     let str = JSON.stringify(transform);
+    //     let value = `translate3d(${transform.x}px,${transform.y}px,0px) scale(${transform.scale}) rotate(${transform.rotate}deg)`;
+    //     el = typeof el == 'string'? document.querySelector(el): el;
+    //     el.style.transform = value;
+    //     el.setAttribute('data-mtouch-status', str);
+    // },
+    // getPos(el) {
+    //     let defaulTrans;
+    //     let cssTrans = window.getComputedStyle(el,null).transform;
+    //     if(window.getComputedStyle && cssTrans !== 'none'){
+    //         defaulTrans = this.matrixTo(cssTrans);
+    //     }else{
+    //         defaulTrans = {
+    //             x: 0,
+    //             y: 0,
+    //             scale: 1,
+    //             rotate: 0,
+    //         };
+    //     }
+    //     return JSON.parse(el.getAttribute('data-mtouch-status')) || defaulTrans;
+    // },
     extend: function extend(obj1, obj2) {
         for (var k in obj2) {
             if (obj2.hasOwnProperty(k)) {
@@ -191,11 +192,12 @@ var EVENT = ['touchstart', 'touchmove', 'touchend', 'drag', 'dragstart', 'dragen
 var ORIGINEVENT = ['touchstart', 'touchmove', 'touchend', 'touchcancel'];
 
 function MTouch(config, operator) {
+
     // 兼容不使用 new 的方式；
     if (!(this instanceof MTouch)) return new MTouch(config, operator);
 
-    var options = void 0;
     // options 多态；
+    var options = void 0;
     if (typeof config === 'string') {
         options = {};
         options.receiver = config;
@@ -309,8 +311,8 @@ MTouch.prototype.bind = function () {
     ORIGINEVENT.forEach(function (evName) {
         var fn = evName == 'touchcancel' ? 'end' : evName.replace('touch', '');
         // 需要存下 bind(this) 后的函数指向，用于 destroy;
-        _this2[fn + 'bind'] = _this2[fn].bind(_this2);
-        _this2.receiver.addEventListener(evName, _this2[fn + 'bind'], false);
+        _this2[fn + '_bind'] = _this2[fn].bind(_this2);
+        _this2.receiver.addEventListener(evName, _this2[fn + '_bind'], false);
     });
 };
 MTouch.prototype.destroy = function () {
@@ -318,7 +320,7 @@ MTouch.prototype.destroy = function () {
 
     ORIGINEVENT.forEach(function (evName) {
         var fn = evName == 'touchcancel' ? 'end' : evName.replace('touch', '');
-        _this3.receiver.removeEventListener(evName, _this3[fn + 'bind'], false);
+        _this3.receiver.removeEventListener(evName, _this3[fn + '_bind'], false);
     });
 };
 MTouch.prototype.start = function (ev) {
@@ -337,16 +339,13 @@ MTouch.prototype.start = function (ev) {
         this.singlePinchStartLength = _.getLength(pinchV1);
     }
 
-    this.touchstart.fire({
-        origin: ev,
-        eventType: 'touchstart'
-    });
+    this.touchstart.fire({ origin: ev, eventType: 'touchstart' });
 };
 MTouch.prototype.move = function (ev) {
     if (!ev.touches || ev.type !== 'touchmove') return;
-    var curPoint = _.getPoint(ev, 0);
-    var curFingers = ev.touches.length;
-    var rotateV1 = void 0,
+    var curPoint = _.getPoint(ev, 0),
+        curFingers = ev.touches.length,
+        rotateV1 = void 0,
         rotateV2 = void 0,
         pinchV2 = void 0,
         pinchLength = void 0,
@@ -370,8 +369,8 @@ MTouch.prototype.move = function (ev) {
 
     // 双指时，需触发pinch和rotate事件；
     if (curFingers > 1) {
-        var curSecPoint = _.getPoint(ev, 1);
-        var vector2 = _.getVector(curSecPoint, curPoint);
+        var curSecPoint = _.getPoint(ev, 1),
+            vector2 = _.getVector(curSecPoint, curPoint);
         // pinch
         if (this.use.pinch) {
             pinchLength = _.getLength(vector2);
@@ -430,26 +429,17 @@ MTouch.prototype.move = function (ev) {
         }
     }
     this.startPoint = curPoint;
-    this.touchmove.fire({
-        eventType: 'touchmove',
-        origin: ev
-    });
+    this.touchmove.fire({ eventType: 'touchmove', origin: ev });
     ev.preventDefault();
 };
 MTouch.prototype.end = function (ev) {
     var _this4 = this;
 
     if (!ev.touches && ev.type !== 'touchend' && ev.type !== 'touchcancel') return;
-
     ['pinch', 'drag', 'rotate', 'singleRotate', 'singlePinch'].forEach(function (evName) {
-        _this4.eventEnd(evName, {
-            origin: ev
-        });
+        _this4.eventEnd(evName, { origin: ev });
     });
-    this.touchend.fire({
-        eventType: 'touchend',
-        origin: ev
-    });
+    this.touchend.fire({ eventType: 'touchend', origin: ev });
 };
 MTouch.prototype.eventFire = function (evName, ev) {
     var ing = evName + 'ing';
@@ -464,8 +454,8 @@ MTouch.prototype.eventFire = function (evName, ev) {
     }
 };
 MTouch.prototype.eventEnd = function (evName, ev) {
-    var ing = evName + 'ing';
-    var end = void 0;
+    var ing = evName + 'ing',
+        end = void 0;
     if (evName == 'rotate' || evName == 'singleRotate') {
         end = evName + 'nd';
     } else {
