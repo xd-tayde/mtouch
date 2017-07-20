@@ -33,10 +33,7 @@ var _ = {
         return Math.acos(r) * direction * 180 / Math.PI;
     },
     getBasePoint: function getBasePoint(el) {
-        if (!el) {
-            console.error('getBasePoint error!');
-            return;
-        }
+        if (!el) return { x: 0, y: 0 };
         var offset = this.getOffset(el);
         var x = offset.left + el.getBoundingClientRect().width / 2,
             y = offset.top + el.getBoundingClientRect().width / 2;
@@ -272,7 +269,11 @@ function MTouch(config, operator) {
         }
         this.operator = document.querySelector(this.ops.operator);
     } else {
-        this.operator = this.receiver;
+        if (this.ops.operator === '') {
+            this.operator = null;
+        } else {
+            this.operator = this.receiver;
+        }
     }
     // touch状态；
     this.fingers = 0;
@@ -334,7 +335,7 @@ MTouch.prototype.start = function (ev) {
         this.secondPoint = _.getPoint(ev, 1);
         this.vector1 = _.getVector(this.secondPoint, this.startPoint);
         this.pinchStartLength = _.getLength(this.vector1);
-    } else if (this.use.singlePinch) {
+    } else if (this.use.singlePinch && this.operator) {
         var pinchV1 = _.getVector(this.startPoint, this.singleBasePoint);
         this.singlePinchStartLength = _.getLength(pinchV1);
     }
@@ -394,7 +395,7 @@ MTouch.prototype.move = function (ev) {
         }
     } else {
         // singlePinch;
-        if (this.use.singlePinch && ev.target.id == this.ops.singlePinch.buttonId) {
+        if (this.use.singlePinch && ev.target.id == this.ops.singlePinch.buttonId && this.operator) {
             pinchV2 = _.getVector(curPoint, this.singleBasePoint);
             singlePinchLength = _.getLength(pinchV2);
             this.eventFire('singlePinch', {
@@ -406,7 +407,7 @@ MTouch.prototype.move = function (ev) {
             this.singlePinchStartLength = singlePinchLength;
         }
         // singleRotate;
-        if (this.use.singleRotate && ev.target.id == this.ops.singleRotate.buttonId) {
+        if (this.use.singleRotate && ev.target.id == this.ops.singleRotate.buttonId && this.operator) {
             rotateV1 = _.getVector(this.startPoint, this.singleBasePoint);
             rotateV2 = _.getVector(curPoint, this.singleBasePoint);
             this.eventFire('singleRotate', {

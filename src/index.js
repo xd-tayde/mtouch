@@ -87,7 +87,11 @@ export default function MTouch(config, operator) {
         }
         this.operator = document.querySelector(this.ops.operator);
     } else {
-        this.operator = this.receiver;
+        if(this.ops.operator === ''){
+            this.operator = null;
+        }else{
+            this.operator = this.receiver;
+        }
     }
     // touch状态；
     this.fingers = 0;
@@ -145,7 +149,7 @@ MTouch.prototype.start = function(ev) {
         this.secondPoint = _.getPoint(ev, 1);
         this.vector1 = _.getVector(this.secondPoint, this.startPoint);
         this.pinchStartLength = _.getLength(this.vector1);
-    } else if (this.use.singlePinch) {
+    } else if (this.use.singlePinch && this.operator) {
         let pinchV1 = _.getVector(this.startPoint, this.singleBasePoint);
         this.singlePinchStartLength = _.getLength(pinchV1);
     }
@@ -205,7 +209,7 @@ MTouch.prototype.move = function(ev) {
         }
     } else {
         // singlePinch;
-        if (this.use.singlePinch && ev.target.id == this.ops.singlePinch.buttonId) {
+        if (this.use.singlePinch && ev.target.id == this.ops.singlePinch.buttonId && this.operator) {
             pinchV2 = _.getVector(curPoint, this.singleBasePoint);
             singlePinchLength = _.getLength(pinchV2);
             this.eventFire('singlePinch', {
@@ -217,7 +221,7 @@ MTouch.prototype.move = function(ev) {
             this.singlePinchStartLength = singlePinchLength;
         }
         // singleRotate;
-        if (this.use.singleRotate && ev.target.id == this.ops.singleRotate.buttonId) {
+        if (this.use.singleRotate && ev.target.id == this.ops.singleRotate.buttonId  && this.operator) {
             rotateV1 = _.getVector(this.startPoint, this.singleBasePoint);
             rotateV2 = _.getVector(curPoint, this.singleBasePoint);
             this.eventFire('singleRotate', {

@@ -24,10 +24,7 @@ export default {
         return Math.acos(r) * direction * 180 / Math.PI;
     },
     getBasePoint(el) {
-        if (!el) {
-            console.error('getBasePoint error!');
-            return;
-        }
+        if (!el) return {x:0,y:0};
         let offset = this.getOffset(el);
         let x = offset.left + el.getBoundingClientRect().width / 2,
             y = offset.top + el.getBoundingClientRect().width / 2;
