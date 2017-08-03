@@ -1,4 +1,4 @@
-# MTouch通用移动端手势库2.2.0
+# MTouch通用移动端手势库
 
 > [demo](http://f2er.meitu.com/gxd/mtouch/example/index.html)
 
@@ -6,32 +6,40 @@
 
 > [download](http://f2er.meitu.com/gxd/mtouch/dist/mtouch.min.js)
 
-> [docs](http://f2er.meitu.com/docs/#/mtouch/)
+### Change Log
 
-### 更新
+- 3.0.3
+	- 为 `switch` 方法增加 `addButton` 参数，便于外部更精准灵活地控制按钮的添加；
 
-2.2.2
+- 3.0.2
+	- 去除绑定单指手势时，如果不传入`operator`的警告，把绑定时不传入，再通过`switch`进行控制纳入常规的使用方式，同时使 `switch` 函数接受空值/`null`等非值；
+	- 美化代码，增加一些基础函数的提取；
+	- 修改 `example`示例；
 
-> 新增可传入 operator = ''，这样可以更方便的进行实例化；
+- 3.0.0
+	- 简化插件整体的使用思路及复杂度；
+	- 修改初始化创建实例的方式，去除初始化时直接绑定事件；
+	- 小幅修改 `API`；
 
-2.2版本
+- 2.2.6
+	- 修改单指缩放旋转参数，buttonId ---> button，对应使用class，以兼容多个按钮的存在；
 
-> 新增直接执行函数的使用方式，修改构造函数的方式；
-> 新增初始化参数的多态判断，可直接使用字符串传入 receiver 与 operator;
+- 2.2.2
+	- 新增可传入 operator = ''，这样可以更方便的进行实例化；
 
-2.1版本
+- 2.2
+	- 新增直接执行函数的使用方式，修改构造函数的方式；
+	- 新增初始化参数的多态判断，可直接使用字符串传入 receiver 与 operator;
 
-> 新增销毁api，mtouch.destroy(); 可解除所有绑定事件；
+- 2.1
+	- 新增销毁api，mtouch.destroy(); 可解除所有绑定事件；
 
-2.0版本
+- 2.0
+	- 剥离了业务逻辑，优化代码；
+	- 调整单指缩放和单指旋转的使用方式，更为清晰，方便；
+	- 新增对一些错误用法的容错和提示；
 
-> 1、剥离了业务逻辑，优化代码；
-
-> 2、调整单指缩放和单指旋转的使用方式，更为清晰，方便；
-
-> 3、新增对一些错误用法的容错和提示；
-
-### 简介
+### Introduction
 
 该手势库是以我们业务中常用的贴纸类型做为基础，进行进一步的封装抽象，更贴近我们业务，更加便于使用，更加轻量以及有更好的业务定制性，大家有业务上的需求时，可随时联系我；该库去除了一些比较少用到的手势，使代码更加精简和轻量，没有依赖，压缩后大小为9K；
 
@@ -46,73 +54,29 @@
 #### 事件类型：
 
 ```js
-EVENT = [
-    'touchstart',
-    'touchmove',
-    'touchend',
-    'drag',
-    'dragstart',
-    'dragend',
-    'pinch',
-    'pinchstart',
-    'pinchend',
-    'rotate',
-    'rotatestart',
-    'rotatend',
-    'singlePinch',
-    'singlePinchstart',
-    'singlePinchend',
-    'singleRotate',·
-    'singleRotatestart',
-    'singleRotatend'
-];
+	EVENT = [
+	    'touchstart',
+	    'touchmove',
+	    'touchend',
+	    'drag',
+	    'dragstart',
+	    'dragend',
+	    'pinch',
+	    'pinchstart',
+	    'pinchend',
+	    'rotate',
+	    'rotatestart',
+	    'rotatend',
+	    'singlePinch',
+	    'singlePinchstart',
+	    'singlePinchend',
+	    'singleRotate',·
+	    'singleRotatestart',
+	    'singleRotatend'
+	];
 ```
 
-### 兼容性
-
-** 移动端全兼容 **
-
-### 使用方式
-
-#### 引入:
-
-##### 1.直接使用公司私有 npm 进行引入;
-
-在shell直接使用 Npm 进行安装
-
-```js
-npm set registry http://npm.meitu-inc.com
-npm install @meitu/mtouch --save
-
-```
-
-```js
-import MTouch from '@meitu/mtouch';
-
-// 或者
-
-let MTouch = required('@meitu/mtouch');
-```
-
-
-##### 2.使用`import || required`直接引入;
-
-```js
-import MTouch from './mtouch.min';
-
-new MTouch( options );
-
-```
-
-##### 3.直接通过`script`标签引入;
-
-```js
-<script src="mtouch.min.js"></script>
-
-new MTouch( options );
-```
-
-#### 使用:
+### Basic Usage:
 
 由于对单个元素的操作中，存在着一些无法避免的问题，例如双指操纵元素时单指先离开；单指先触发后，又变换成双指操作；一个在元素上，一个在元素外等等，这些问题会影响到基础手指的确定，会导致操作过程中元素可能出现 **跳动** ；
 
@@ -121,84 +85,20 @@ new MTouch( options );
 如果直接绑定到元素上，则需注意对 **每个需要操作的元素单独创建一个实例**；
 
 ```js
-new MTouch({
+let mt = new MTouch(selector);
+// 绑定拖动事件；
+mt.on('drag',e => {
 
-    // 事件监听元素，用于监听所有事件产生；必填；
-
-    receiver:'selector',
-
-    // 事件操纵元素，用于反馈事件所的操作；
-    // 该值为可选，如果不填，则操纵元素即为监听元素本身；
-
-    operator:'selector',  
-
-    // 可监听的事件；
-    // 传入事件回调中的事件对象，有在原生对象的基础上做了层简单的封装；
-    // ev = {
-    //    origin : 原生事件对象，
-    //    eventType : eventName,  对应的事件名称
-    //    delta:{ deltaX/deltaY/scale/rotate } 事件触发产生的增量；
-    // };
-
-    // 与原生的touch事件触发时机一致；
-
-    touchstart(ev) {},  
-    touchmove(ev) {},   
-    touchend(ev) {},
-
-    // 拖动事件;
-    // ev.delta对象中对应 deltaX / deltaY 两个属性值，该值为拖动事件触发的位移增量，单位为px，表示比上一次触发增加的位移量；
-
-    drag(ev) {},
-    dragstart(ev) {},
-    dragend(ev) {},
-
-    // 双指缩放事件；
-    // ev.delta对象中对应 scale 属性，为缩放事件的缩放增量；
-
-    pinch(ev) {},
-    pinchstart(ev) {},
-    pinchend(ev) {},
-
-    // 双指旋转事件；
-    // ev.delta对象中对应 rotate 属性，为缩放事件的缩放增量；
-
-    rotate(ev) {},
-    rotatestart(ev) {},
-    rotatend(ev) {},
-
-    // 单指缩放事件；
-    // ev.delta对象中对应 scale 属性，为单指缩放事件的缩放增量；
-
-    singlePinch:{
-        start(){},
-        pinch(){},
-        end(){},
-        buttonId:null,  // 必需
-    },
-
-    // 单指旋转事件；
-    // ev.delta对象中对应 rotate 属性，为缩放事件的缩放增量；
-
-    singleRotate:{
-        start(){},
-        rotate(){},
-        end(){},
-        buttonId:null,  // 必需
-    },
-})
-```
-
-```js
-// 也可直接使用函数调用；
-// receiver: 接收器 selector 必需；
-// operator: 操作器 selector 可选； 用于单指操作；
-MTouch(receiver,operator).on(evName,(ev)=>{
-    console.log(ev);
 });
+
+// 绑定单指缩放事件；单指事件需要指定对应的元素的选择器;
+mt.on('singlePinch', e =>{
+
+} , operator);
+
 ```
 
-#### 使用方式；
+#### Example；
 
 通过 `ev.delta` 暴露的运动增量来进行元素的操作；
 
@@ -211,21 +111,9 @@ let transform = {
     rotate:0
 }
 
-new MTouch({
-    receiver:'selector',
-    operator:'selector',
-    drag(ev) {
-        transform.x += ev.deltaX;
+MTouch('selector', ev => {
+   transform.x += ev.deltaX;
         transform.y += ev.deltaY;
-
-        $(el).css('transform',
-                `translate3d(${transform.x}px,${transform.y}px,0px) scale(${transform.scale}) rotate(${transform.rotate}deg)`);
-    }
-})
-// 或者
-MTouch('selector','selector').on('drag',(ev)=>{
-    transform.x += ev.deltaX;
-    transform.y += ev.deltaY;
 
     $(el).css('transform',
             `translate3d(${transform.x}px,${transform.y}px,0px) scale(${transform.scale}) rotate(${transform.rotate}deg)`);
@@ -235,33 +123,40 @@ MTouch('selector','selector').on('drag',(ev)=>{
 
 #### API；
 
-##### 1.`switchOperator`
+##### 1.`switch`
 
-`mtouch.switchOperator(el)`;
+`mtouch.switch(el，addButton)`;
 
 该方法适用于切换操作元素 `operator`以改变单指缩放的基点,例如：
+params:
+>	el : 切换到的元素；
+>
+>	addButton: 是否需要添加单指操作按钮；
 
-    ```js
-    $('.js-el').on('tap',function(){
-        $('.js-el').removeClass('active');
-        $(this).addClass('active');
-        mtouch.switchOperator(this);
-    })
-    ```
+
+```js
+$('.js-el').on('tap',function(){
+    $('.js-el').removeClass('active');
+    $(this).addClass('active');
+    mtouch.switchOperator(this);
+})
+```
 
 ##### 2.`on/off`:
 
-`mtouch.on(evName,handler) / mtouch.off(evName,handler)`;
+`mtouch.on(evName,handler,operator) / mtouch.off(evName,handler)`;
 
-该方法可以用在实例化后，添加或删除某个事件的回调，例如：
+该方法可以绑定或解绑某个事件的回调，例如：
 
-    ```js
-    mtouch.on('drag',(ev)=>{
-        console.log(ev);
-    })
-    ```
+```js
+mtouch.on('drag',(ev)=>{
+    console.log(ev);
+})
+```
+> tips: 需要绑定单指事件时，需要传入对应的元素，否则会以 `touch` 盒子的中心作为基础点进行计算，数值会有误；
+
 ##### 3. `destroy`:
 
-    `mtouch.destroy()`;
+    mtouch.destroy();
 
-解除事件绑定;
+解除所有事件绑定；

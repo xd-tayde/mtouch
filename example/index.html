@@ -46,6 +46,13 @@
             top: 50%;
             margin: -50px 0 0 -50px;
         }
+        .el.active{
+            outline: 2px solid black;
+            z-index: 99;
+        }
+        .el.active .mtouch-singleButton{
+            display: inline-block;
+        }
         .single{
             position: absolute;
             right: -15px;
@@ -55,6 +62,13 @@
             background:url(images/pinch.png) no-repeat 0 0;
             background-size: 100% 100%;
         }
+        .mtouch-singleButton{
+            background-image:url(images/pinch.png);
+        }
+        .js-drag-el .mtouch-singleButton{
+            background-image:url(images/pinch.png);
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -62,7 +76,8 @@
     <div class="wrap">
         <div class="js-area area drag">
             拖放(drag)
-            <div class="el js-drag-el"></div>
+            <div class="el js-drag-el a" style="left:70%;top:50%;"></div>
+            <div class="el js-drag-el b active" style="left:30%;top:50%;"></div>
         </div>
         <div class="area pinch">
             双指缩放(pinch)
@@ -72,16 +87,16 @@
             双指旋转(rotate)
             <div class="el js-rotate-el"></div>
         </div>
-        <div class="area rotate">
+        <div class="area singlePinch">
             单指缩放(singlePinch)
-            <div class="el js-singlePinch-el">
-                <div class="single" id="js-singlePinch"></div>
+            <div class="el js-singlePinch-el js-singlePinch-el">
+                <!-- <div class="single js-singlePinch"></div> -->
             </div>
         </div>
-        <div class="area rotate">
+        <div class="area singleRotate">
             单指旋转(singleRotate)
             <div class="el js-singleRotate-el">
-                <div class="single" id="js-singleRotate"></div>
+                <!-- <div class="single js-singleRotate"></div> -->
             </div>
         </div>
     </div>

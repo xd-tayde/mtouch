@@ -33,14 +33,13 @@ switch (process.env.NODE_ENV) {
 Configure = {
     entry: `${paths.source.root}index.js`,
     moduleName: packages.moduleName,
-    moduleId: packages.moduleName,
     sourceMap: true,
     targets: [{
         dest: `${paths.dist.root}${fileName}.js`,
         format: 'umd',
     }],
     globals: {
-        // is: '@meitu/is',
+        //  '@meitu/is':'is',
     },
     plugins: [
         babel(),

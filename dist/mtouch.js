@@ -1,35 +1,41 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-	typeof define === 'function' && define.amd ? define('MTouch', factory) :
+	typeof define === 'function' && define.amd ? define(factory) :
 	(global.MTouch = factory());
 }(this, (function () { 'use strict';
 
-var _typeof$1 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _ = {
     getLength: function getLength(v1) {
-        if ((typeof v1 === 'undefined' ? 'undefined' : _typeof$1(v1)) !== 'object') {
+        if ((typeof v1 === 'undefined' ? 'undefined' : _typeof(v1)) !== 'object') {
             console.error('getLength error!');
             return;
         }
         return Math.sqrt(v1.x * v1.x + v1.y * v1.y);
     },
     getAngle: function getAngle(v1, v2) {
-        if ((typeof v1 === 'undefined' ? 'undefined' : _typeof$1(v1)) !== 'object' || (typeof v2 === 'undefined' ? 'undefined' : _typeof$1(v2)) !== 'object') {
+        if ((typeof v1 === 'undefined' ? 'undefined' : _typeof(v1)) !== 'object' || (typeof v2 === 'undefined' ? 'undefined' : _typeof(v2)) !== 'object') {
             console.error('getAngle error!');
             return;
         }
+        // 判断方向，顺时针为 1 ,逆时针为 -1；
         var direction = v1.x * v2.y - v2.x * v1.y > 0 ? 1 : -1,
-            len1 = this.getLength(v1),
+
+        // 两个向量的模；
+        len1 = this.getLength(v1),
             len2 = this.getLength(v2),
             mr = len1 * len2,
             dot = void 0,
             r = void 0;
         if (mr === 0) return 0;
+        // 通过数量积公式可以推导出：
+        // cos = (x1 * x2 + y1 * y2)/(|a| * |b|);
         dot = v1.x * v2.x + v1.y * v2.y;
         r = dot / mr;
         if (r > 1) r = 1;
         if (r < -1) r = -1;
+        // 解值并结合方向转化为角度值；
         return Math.acos(r) * direction * 180 / Math.PI;
     },
     getBasePoint: function getBasePoint(el) {
@@ -39,34 +45,11 @@ var _ = {
             y = offset.top + el.getBoundingClientRect().width / 2;
         return { x: Math.round(x), y: Math.round(y) };
     },
-
-    // setPos(el, transform) {
-    //     let str = JSON.stringify(transform);
-    //     let value = `translate3d(${transform.x}px,${transform.y}px,0px) scale(${transform.scale}) rotate(${transform.rotate}deg)`;
-    //     el = typeof el == 'string'? document.querySelector(el): el;
-    //     el.style.transform = value;
-    //     el.setAttribute('data-mtouch-status', str);
-    // },
-    // getPos(el) {
-    //     let defaulTrans;
-    //     let cssTrans = window.getComputedStyle(el,null).transform;
-    //     if(window.getComputedStyle && cssTrans !== 'none'){
-    //         defaulTrans = this.matrixTo(cssTrans);
-    //     }else{
-    //         defaulTrans = {
-    //             x: 0,
-    //             y: 0,
-    //             scale: 1,
-    //             rotate: 0,
-    //         };
-    //     }
-    //     return JSON.parse(el.getAttribute('data-mtouch-status')) || defaulTrans;
-    // },
     extend: function extend(obj1, obj2) {
         for (var k in obj2) {
             if (obj2.hasOwnProperty(k)) {
-                if (_typeof$1(obj2[k]) == 'object') {
-                    if (_typeof$1(obj1[k]) !== 'object') {
+                if (_typeof(obj2[k]) == 'object' && !(obj2[k] instanceof Node)) {
+                    if (_typeof(obj1[k]) !== 'object') {
                         obj1[k] = {};
                     }
                     this.extend(obj1[k], obj2[k]);
@@ -78,7 +61,7 @@ var _ = {
         return obj1;
     },
     getVector: function getVector(p1, p2) {
-        if ((typeof p1 === 'undefined' ? 'undefined' : _typeof$1(p1)) !== 'object' || (typeof p2 === 'undefined' ? 'undefined' : _typeof$1(p2)) !== 'object') {
+        if ((typeof p1 === 'undefined' ? 'undefined' : _typeof(p1)) !== 'object' || (typeof p2 === 'undefined' ? 'undefined' : _typeof(p2)) !== 'object') {
             console.error('getvector error!');
             return;
         }
@@ -128,6 +111,57 @@ var _ = {
         var end = useName.indexOf('rotate') !== -1 ? 'nd' : 'end';
         useName = useName.replace(end, '');
         return useName;
+    },
+    domify: function domify(DOMString) {
+        var htmlDoc = document.implementation.createHTMLDocument();
+        htmlDoc.body.innerHTML = DOMString;
+        return htmlDoc.body.children;
+    },
+    getEl: function getEl(el) {
+        if (!el) {
+            console.error('el error,there must be a el!');
+            return;
+        }
+        var _el = void 0;
+        if (typeof el == 'string') {
+            _el = document.querySelector(el);
+        } else if (el instanceof Node) {
+            _el = el;
+        } else {
+            console.error('el error,there must be a el!');
+            return;
+        }
+        return _el;
+    },
+    data: function data(el, key) {
+        el = this.getEl(el);
+        return el.getAttribute('data-' + key);
+    },
+    include: function include(str1, str2) {
+        if (str1.indexOf) {
+            return str1.indexOf(str2) !== -1;
+        } else {
+            return false;
+        }
+    },
+    getPos: function getPos(el) {
+        if (!el) return;
+        el = this.getEl(el);
+        var defaulTrans = void 0;
+        var style = window.getComputedStyle(el, null);
+        var cssTrans = style.transform || style.webkitTransform;
+
+        if (window.getComputedStyle && cssTrans !== 'none') {
+            defaulTrans = this.matrixTo(cssTrans);
+        } else {
+            defaulTrans = {
+                x: 0,
+                y: 0,
+                scale: 1,
+                rotate: 0
+            };
+        }
+        return JSON.parse(el.getAttribute('data-mtouch-status')) || defaulTrans;
     }
 };
 
@@ -182,104 +216,32 @@ var HandlerBus = function () {
     return HandlerBus;
 }();
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-var EVENT = ['touchstart', 'touchmove', 'touchend', 'drag', 'dragstart', 'dragend', 'pinch', 'pinchstart', 'pinchend', 'rotate', 'rotatestart', 'rotatend'];
+var EVENT = ['touchstart', 'touchmove', 'touchend', 'drag', 'dragstart', 'dragend', 'pinch', 'pinchstart', 'pinchend', 'rotate', 'rotatestart', 'rotatend', 'singlePinchstart', 'singlePinch', 'singlePinchend', 'singleRotate', 'singleRotatestart', 'singleRotatend'];
 
 var ORIGINEVENT = ['touchstart', 'touchmove', 'touchend', 'touchcancel'];
 
-function MTouch(config, operator) {
+function MTouch() {
+    var el = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
     // 兼容不使用 new 的方式；
-    if (!(this instanceof MTouch)) return new MTouch(config, operator);
-
-    // options 多态；
-    var options = void 0;
-    if (typeof config === 'string') {
-        options = {};
-        options.receiver = config;
-        if (operator) {
-            options.operator = operator;
-        }
-    } else if ((typeof config === 'undefined' ? 'undefined' : _typeof(config)) === 'object') {
-        options = config;
-    }
-
-    this.ops = {
-        // config:
-        receiver: null,
-        operator: null,
-
-        // event
-        touchstart: function touchstart() {},
-        touchmove: function touchmove() {},
-        touchend: function touchend() {},
-        drag: function drag() {},
-        dragstart: function dragstart() {},
-        dragend: function dragend() {},
-        pinch: function pinch() {},
-        pinchstart: function pinchstart() {},
-        pinchend: function pinchend() {},
-        rotate: function rotate() {},
-        rotatestart: function rotatestart() {},
-        rotatend: function rotatend() {},
-
-
-        singlePinch: {
-            start: function start() {},
-            pinch: function pinch() {},
-            end: function end() {},
-
-            buttonId: null
-        },
-
-        singleRotate: {
-            start: function start() {},
-            rotate: function rotate() {},
-            end: function end() {},
-
-            buttonId: null
-        }
-    };
-
+    if (!(this instanceof MTouch)) return new MTouch(el);
     // 开关；
+    // 初始化时关闭，在调用 on 函数时对应开启；
     this.use = {
-        drag: !!options.drag || !!options.dragstart || !!options.dragend,
-        pinch: !!options.pinch || !!options.pinchstart || !!options.pinchend,
-        rotate: !!options.rotate || !!options.rotatestart || !!options.rotateend,
-        singlePinch: !!options.singlePinch && !!options.singlePinch.buttonId,
-        singleRotate: !!options.singleRotate && !!options.singleRotate.buttonId
+        drag: false,
+        pinch: false,
+        rotate: false,
+        singlePinch: false,
+        singleRotate: false
     };
-
-    this.ops = _.extend(this.ops, options);
-
-    // receiver test;
-    if (!this.ops.receiver || typeof this.ops.receiver !== 'string') {
-        console.error('receiver error,there must be a receiver-selector');
-        return;
-    }
-    // 事件接收器；
-    this.receiver = document.querySelector(this.ops.receiver);
-
-    // 事件操纵器；
-    if (this.ops.operator) {
-        if (typeof this.ops.operator !== 'string') {
-            console.error('operator error, the operator param must be a selector');
-            return;
-        }
-        this.operator = document.querySelector(this.ops.operator);
-    } else {
-        if (this.ops.operator === '') {
-            this.operator = null;
-        } else {
-            this.operator = this.receiver;
-        }
-    }
-    // touch状态；
+    // 获取容器元素；
+    this.operator = this.el = _.getEl(el);
+    // 状态记录；
+    this.draging = this.pinching = this.rotating = this.singlePinching = this.singleRotating = false;
+    // 全局参数记录；
     this.fingers = 0;
-    // 初始状态;
-    this.draging = this.pinching = this.rotating = this.singleRotating = this.singlePinching = false;
-
     this.startScale = 1;
     this.startPoint = {};
     this.secondPoint = {};
@@ -287,33 +249,29 @@ function MTouch(config, operator) {
     this.singlePinchStartLength = null;
     this.vector1 = {};
     this.singleBasePoint = {};
-    // eventbus
-    this.driveBus();
-    this.bind();
+
+    // 初始化注册事件队列；
+    this._driveBus();
+    // 监听原生 touch 事件；
+    this._bind();
 }
 
-MTouch.prototype.driveBus = function () {
+MTouch.prototype._driveBus = function () {
     var _this = this;
 
-    EVENT.forEach(function (eventName) {
-        _this[eventName] = new HandlerBus(_this.receiver).add(_this.ops[eventName] || function () {});
+    EVENT.forEach(function (evName) {
+        _this[evName] = new HandlerBus(_this.el);
     });
-    this.singlePinchstart = new HandlerBus(this.receiver).add(this.ops.singlePinch.start || function () {});
-    this.singlePinch = new HandlerBus(this.receiver).add(this.ops.singlePinch.pinch || function () {});
-    this.singlePinchend = new HandlerBus(this.receiver).add(this.ops.singlePinch.end || function () {});
-    this.singleRotatestart = new HandlerBus(this.receiver).add(this.ops.singleRotate.start || function () {});
-    this.singleRotate = new HandlerBus(this.receiver).add(this.ops.singleRotate.rotate || function () {});
-    this.singleRotatend = new HandlerBus(this.receiver).add(this.ops.singleRotate.end || function () {});
 };
 
-MTouch.prototype.bind = function () {
+MTouch.prototype._bind = function () {
     var _this2 = this;
 
     ORIGINEVENT.forEach(function (evName) {
         var fn = evName == 'touchcancel' ? 'end' : evName.replace('touch', '');
         // 需要存下 bind(this) 后的函数指向，用于 destroy;
-        _this2[fn + '_bind'] = _this2[fn].bind(_this2);
-        _this2.receiver.addEventListener(evName, _this2[fn + '_bind'], false);
+        _this2['_' + fn + '_bind'] = _this2['_' + fn].bind(_this2);
+        _this2.el.addEventListener(evName, _this2['_' + fn + '_bind'], false);
     });
 };
 MTouch.prototype.destroy = function () {
@@ -321,37 +279,44 @@ MTouch.prototype.destroy = function () {
 
     ORIGINEVENT.forEach(function (evName) {
         var fn = evName == 'touchcancel' ? 'end' : evName.replace('touch', '');
-        _this3.receiver.removeEventListener(evName, _this3[fn + '_bind'], false);
+        _this3.el.removeEventListener(evName, _this3['_' + fn + '_bind'], false);
     });
 };
-MTouch.prototype.start = function (ev) {
-    if (!ev.touches || ev.type !== 'touchstart') return;
-
-    this.fingers = ev.touches.length;
-    this.startPoint = _.getPoint(ev, 0);
+MTouch.prototype._start = function (e) {
+    if (!e.touches || e.type !== 'touchstart') return;
+    // 记录手指数量；
+    this.fingers = e.touches.length;
+    // 记录第一触控点；
+    this.startPoint = _.getPoint(e, 0);
+    // 计算单指操作时的基础点；
     this.singleBasePoint = _.getBasePoint(this.operator);
-
+    // 双指操作时
     if (this.fingers > 1) {
-        this.secondPoint = _.getPoint(ev, 1);
+        // 第二触控点；
+        this.secondPoint = _.getPoint(e, 1);
+        // 计算双指向量；
         this.vector1 = _.getVector(this.secondPoint, this.startPoint);
+        // 计算向量模；
         this.pinchStartLength = _.getLength(this.vector1);
-    } else if (this.use.singlePinch && this.operator) {
+    } else if (this.use.singlePinch) {
+        // 单指且监听 singlePinch 时，计算向量模；
         var pinchV1 = _.getVector(this.startPoint, this.singleBasePoint);
         this.singlePinchStartLength = _.getLength(pinchV1);
     }
-
-    this.touchstart.fire({ origin: ev, eventType: 'touchstart' });
+    // 触发 touchstart 事件；
+    this.touchstart.fire({ origin: e, eventType: 'touchstart' });
 };
-MTouch.prototype.move = function (ev) {
+MTouch.prototype._move = function (ev) {
     if (!ev.touches || ev.type !== 'touchmove') return;
-    var curPoint = _.getPoint(ev, 0),
+    // 判断触控点是否为 singlebutton 区域；
+    var isSingleButton = _.data(ev.target, 'singleButton'),
         curFingers = ev.touches.length,
+        curPoint = _.getPoint(ev, 0),
+        singlePinchLength = void 0,
+        pinchLength = void 0,
         rotateV1 = void 0,
         rotateV2 = void 0,
-        pinchV2 = void 0,
-        pinchLength = void 0,
-        singlePinchLength = void 0;
-
+        pinchV2 = void 0;
     // 当从原先的两指到一指的时候，可能会出现基础手指的变化，导致跳动；
     // 因此需屏蔽掉一次错误的touchmove事件，待重新设置基础指后，再继续进行；
     if (curFingers < this.fingers) {
@@ -359,23 +324,21 @@ MTouch.prototype.move = function (ev) {
         this.fingers = curFingers;
         return;
     }
-
-    // 两指先后触摸时，只会触发第一指一次touchstart，第二指不会再次触发touchstart；
+    // 两指先后触摸时，只会触发第一指一次 touchstart，第二指不会再次触发 touchstart；
     // 因此会出现没有记录第二指状态，需要在touchmove中重新获取参数；
     if (curFingers > 1 && (!this.secondPoint || !this.vector1 || !this.pinchStartLength)) {
         this.secondPoint = _.getPoint(ev, 1);
         this.vector1 = _.getVector(this.secondPoint, this.startPoint);
         this.pinchStartLength = _.getLength(this.vector1);
     }
-
-    // 双指时，需触发pinch和rotate事件；
+    // 双指时，需触发 pinch 和 rotate 事件；
     if (curFingers > 1) {
         var curSecPoint = _.getPoint(ev, 1),
             vector2 = _.getVector(curSecPoint, curPoint);
-        // pinch
+        // 触发 pinch 事件；
         if (this.use.pinch) {
             pinchLength = _.getLength(vector2);
-            this.eventFire('pinch', {
+            this._eventFire('pinch', {
                 delta: {
                     scale: pinchLength / this.pinchStartLength
                 },
@@ -383,9 +346,9 @@ MTouch.prototype.move = function (ev) {
             });
             this.pinchStartLength = pinchLength;
         }
-        // rotate
+        // 触发 rotate 事件；
         if (this.use.rotate) {
-            this.eventFire('rotate', {
+            this._eventFire('rotate', {
                 delta: {
                     rotate: _.getAngle(this.vector1, vector2)
                 },
@@ -394,11 +357,11 @@ MTouch.prototype.move = function (ev) {
             this.vector1 = vector2;
         }
     } else {
-        // singlePinch;
-        if (this.use.singlePinch && ev.target.id == this.ops.singlePinch.buttonId && this.operator) {
+        // 触发 singlePinch 事件;
+        if (this.use.singlePinch && isSingleButton) {
             pinchV2 = _.getVector(curPoint, this.singleBasePoint);
             singlePinchLength = _.getLength(pinchV2);
-            this.eventFire('singlePinch', {
+            this._eventFire('singlePinch', {
                 delta: {
                     scale: singlePinchLength / this.singlePinchStartLength
                 },
@@ -406,11 +369,11 @@ MTouch.prototype.move = function (ev) {
             });
             this.singlePinchStartLength = singlePinchLength;
         }
-        // singleRotate;
-        if (this.use.singleRotate && ev.target.id == this.ops.singleRotate.buttonId && this.operator) {
+        // 触发 singleRotate 事件;
+        if (this.use.singleRotate && isSingleButton) {
             rotateV1 = _.getVector(this.startPoint, this.singleBasePoint);
             rotateV2 = _.getVector(curPoint, this.singleBasePoint);
-            this.eventFire('singleRotate', {
+            this._eventFire('singleRotate', {
                 delta: {
                     rotate: _.getAngle(rotateV1, rotateV2)
                 },
@@ -418,9 +381,10 @@ MTouch.prototype.move = function (ev) {
             });
         }
     }
+    // 触发 drag 事件；
     if (this.use.drag) {
-        if (ev.target.id !== this.ops.singlePinch.buttonId && ev.target.id !== this.ops.singleRotate.buttonId) {
-            this.eventFire('drag', {
+        if (!isSingleButton) {
+            this._eventFire('drag', {
                 delta: {
                     deltaX: curPoint.x - this.startPoint.x,
                     deltaY: curPoint.y - this.startPoint.y
@@ -430,21 +394,23 @@ MTouch.prototype.move = function (ev) {
         }
     }
     this.startPoint = curPoint;
+    // 触发 touchmove 事件；
     this.touchmove.fire({ eventType: 'touchmove', origin: ev });
     ev.preventDefault();
 };
-MTouch.prototype.end = function (ev) {
+MTouch.prototype._end = function (ev) {
     var _this4 = this;
 
     if (!ev.touches && ev.type !== 'touchend' && ev.type !== 'touchcancel') return;
+    // 触发 end 事件；
     ['pinch', 'drag', 'rotate', 'singleRotate', 'singlePinch'].forEach(function (evName) {
-        _this4.eventEnd(evName, { origin: ev });
+        _this4._eventEnd(evName, { origin: ev });
     });
     this.touchend.fire({ eventType: 'touchend', origin: ev });
 };
-MTouch.prototype.eventFire = function (evName, ev) {
-    var ing = evName + 'ing';
-    var start = evName + 'start';
+MTouch.prototype._eventFire = function (evName, ev) {
+    var ing = evName + 'ing',
+        start = evName + 'start';
     if (!this[ing]) {
         ev.eventType = start;
         this[start].fire(ev);
@@ -454,7 +420,7 @@ MTouch.prototype.eventFire = function (evName, ev) {
         this[evName].fire(ev);
     }
 };
-MTouch.prototype.eventEnd = function (evName, ev) {
+MTouch.prototype._eventEnd = function (evName, ev) {
     var ing = evName + 'ing',
         end = void 0;
     if (evName == 'rotate' || evName == 'singleRotate') {
@@ -468,12 +434,54 @@ MTouch.prototype.eventEnd = function (evName, ev) {
         this[ing] = false;
     }
 };
-MTouch.prototype.switchOperator = function (el) {
-    this.operator = el;
+// 添加 button 区域；
+// 背景样式由业务方定制；
+MTouch.prototype._addButton = function (el) {
+    var _$domify = _.domify('<div class="mtouch-singleButton" data-singleButton=\'true\' style=\'position:absolute;right:-15px;bottom: -15px;width:30px;height: 30px;background-size: 100% 100%;\'></div>'),
+        _$domify2 = _slicedToArray(_$domify, 1),
+        button = _$domify2[0],
+        _style = void 0;
+
+    el.appendChild(button);
+    el.setAttribute('data-mtouch-addButton', true);
+    if (getComputedStyle && window.getComputedStyle(el, null).position === 'static') {
+        _style = el.style || '';
+        el.style = _style + 'position:relative';
+    }
 };
-MTouch.prototype.on = function (evName, handler) {
+// 切换 operator;
+MTouch.prototype.switch = function (el) {
+    var addButton = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+    var _el = void 0;
+    if (!el) {
+        this.operator = this.el;
+        return;
+    }
+    this.operator = _el = _.getEl(el);
+    if (!_.data(_el, 'mtouch-addButton') && (this.use.singleRotate || this.use.singlePinch) && addButton) {
+        this._addButton(_el);
+    }
+};
+MTouch.prototype.on = function (evName) {
+    var _this5 = this;
+
+    var handler = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+    var operator = arguments[2];
+
+    if (_.include(evName, ' ')) {
+        evName.split(' ').forEach(function (v) {
+            _this5._on(v, handler, operator);
+        });
+    } else {
+        this._on(evName, handler, operator);
+    }
+    return this;
+};
+MTouch.prototype._on = function (evName, handler, operator) {
     this.use[_.getUseName(evName)] = true;
     this[evName].add(handler);
+    this.switch(operator);
 };
 MTouch.prototype.off = function (evName, handler) {
     this[evName].del(handler);

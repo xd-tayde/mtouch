@@ -11,16 +11,21 @@ export default {
             console.error('getAngle error!');
             return;
         }
+        // 判断方向，顺时针为 1 ,逆时针为 -1；
         let direction = v1.x * v2.y - v2.x * v1.y > 0 ? 1: -1,
+            // 两个向量的模；
             len1 = this.getLength(v1),
             len2 = this.getLength(v2),
             mr = len1 * len2,
             dot,r;
         if (mr === 0)return 0;
+        // 通过数量积公式可以推导出：
+        // cos = (x1 * x2 + y1 * y2)/(|a| * |b|);
         dot = v1.x * v2.x + v1.y * v2.y;
         r = dot / mr;
         if (r > 1)r = 1;
         if (r < -1)r = -1;
+        // 解值并结合方向转化为角度值；
         return Math.acos(r) * direction * 180 / Math.PI;
     },
     getBasePoint(el) {
@@ -30,32 +35,10 @@ export default {
             y = offset.top + el.getBoundingClientRect().width / 2;
         return {x: Math.round(x), y: Math.round(y)};
     },
-    // setPos(el, transform) {
-    //     let str = JSON.stringify(transform);
-    //     let value = `translate3d(${transform.x}px,${transform.y}px,0px) scale(${transform.scale}) rotate(${transform.rotate}deg)`;
-    //     el = typeof el == 'string'? document.querySelector(el): el;
-    //     el.style.transform = value;
-    //     el.setAttribute('data-mtouch-status', str);
-    // },
-    // getPos(el) {
-    //     let defaulTrans;
-    //     let cssTrans = window.getComputedStyle(el,null).transform;
-    //     if(window.getComputedStyle && cssTrans !== 'none'){
-    //         defaulTrans = this.matrixTo(cssTrans);
-    //     }else{
-    //         defaulTrans = {
-    //             x: 0,
-    //             y: 0,
-    //             scale: 1,
-    //             rotate: 0,
-    //         };
-    //     }
-    //     return JSON.parse(el.getAttribute('data-mtouch-status')) || defaulTrans;
-    // },
     extend(obj1, obj2) {
         for (let k in obj2) {
             if (obj2.hasOwnProperty(k)) {
-                if(typeof obj2[k] == 'object'){
+                if(typeof obj2[k] == 'object' && !(obj2[k] instanceof Node)){
                     if(typeof obj1[k] !== 'object'){
                         obj1[k] = {};
                     }
@@ -118,5 +101,56 @@ export default {
         let end = useName.indexOf('rotate') !== -1 ? 'nd' : 'end';
         useName = useName.replace(end,'');
         return useName;
+    },
+    domify(DOMString) {
+        let htmlDoc = document.implementation.createHTMLDocument();
+        htmlDoc.body.innerHTML = DOMString;
+        return htmlDoc.body.children;
+    },
+    getEl(el){
+        if(!el){
+            console.error('el error,there must be a el!');
+            return;
+        }
+        let _el;
+        if(typeof el == 'string'){
+            _el = document.querySelector(el);
+        }else if(el instanceof Node){
+            _el = el;
+        }else{
+            console.error('el error,there must be a el!');
+            return;
+        }
+        return _el;
+    },
+    data(el,key){
+        el = this.getEl(el);
+        return el.getAttribute(`data-${key}`);
+    },
+    include(str1,str2){
+        if(str1.indexOf){
+            return str1.indexOf(str2) !== -1;
+        }else{
+            return false;
+        }
+    },
+    getPos(el) {
+        if(!el)return;
+        el = this.getEl(el);
+        let defaulTrans;
+        let style = window.getComputedStyle(el,null);
+        let cssTrans = style.transform || style.webkitTransform;
+
+        if(window.getComputedStyle && cssTrans !== 'none'){
+            defaulTrans = this.matrixTo(cssTrans);
+        }else{
+            defaulTrans = {
+                x: 0,
+                y: 0,
+                scale: 1,
+                rotate: 0,
+            };
+        }
+        return JSON.parse(el.getAttribute('data-mtouch-status')) || defaulTrans;
     },
 };

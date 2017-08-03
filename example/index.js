@@ -1,4 +1,5 @@
-import MTouch from '../src/index';
+import MT from '../src/index';
+import _ from '../src/utils';
 
 window.requestAnimFrame = (function() {
     return window.requestAnimationFrame || window.webkitRequestAnimationFrame || function(callback) {
@@ -13,25 +14,45 @@ let dragTrans = {
     scale:1,
     rotate:0,
 };
-let $drag = $('.js-drag-el');
+let $drags = $('.js-drag-el');
+let $drag = $('.b');
 let wrap = document.querySelector('.js-area');
 let wrapRect = wrap.getBoundingClientRect();
 let elRect = $drag[0].getBoundingClientRect();
-new MTouch({
-    receiver:'.js-area',
-    operator:'',
-    drag(ev){
+let freeze = false;
+let mt = MT('.js-area');
+mt.on('drag',(ev)=>{
+    if(!freeze){
         dragTrans.x += ev.delta.deltaX;
         dragTrans.y += ev.delta.deltaY;
         set($drag,limit(wrap,$drag[0],dragTrans));
-    },
+    }
+}).on('pinch singlePinch',ev=>{
+    if(!freeze){
+        dragTrans.scale *= ev.delta.scale;
+        set($drag,dragTrans);
+    }
+}).on('rotate singleRotate',ev=>{
+    if(!freeze){
+        dragTrans.rotate += ev.delta.rotate;
+        set($drag,dragTrans);
+    }
+}).switch('.b',false);
+
+$drags.on('click',function(e){
+    freeze = false;
+    $drags.removeClass('active');
+    $(this).addClass('active');
+    dragTrans = _.getPos(this);
+    $drag = $(this);
+    mt.switch(this);
+    e.stopPropagation();
 });
-// MTouch('.js-area').on('drag',(ev)=>{
-//     dragTrans.x += ev.delta.deltaX;
-//     dragTrans.y += ev.delta.deltaY;
-//     set($drag,limit(wrap,$drag[0],dragTrans));
-// });
-// console.log(touch);
+$(wrap).on('click',function(){
+    $drags.removeClass('active');
+    mt.switch(null);
+    freeze = true;
+});
 
 function limit(wrap,el,trans){
     let bounce = 40;
@@ -54,14 +75,11 @@ let pinchTrans = {
     rotate:0,
 };
 let $pinch = $('.js-pinch-el');
-new MTouch({
-    receiver:'.js-pinch-el',
-    pinch(ev){
-        pinchTrans.scale *= ev.delta.scale;
-        set($pinch,pinchTrans);
-    },
+MT('.pinch').on('pinch',ev=>{
+    pinchTrans.scale *= ev.delta.scale;
+    set($pinch,pinchTrans);
 });
-
+//
 // rotate;
 let rotateTrans = {
     x:0,
@@ -70,14 +88,11 @@ let rotateTrans = {
     rotate:0,
 };
 let $rotate = $('.js-rotate-el');
-new MTouch({
-    receiver:'.js-rotate-el',
-    rotate(ev){
-        rotateTrans.rotate += ev.delta.rotate;
-        set($rotate,rotateTrans);
-    },
+MT('.rotate').on('rotate',ev=>{
+    rotateTrans.rotate += ev.delta.rotate;
+    set($rotate,rotateTrans);
 });
-// singlePinch;
+
 let singlePinchTrans = {
     x:0,
     y:0,
@@ -85,16 +100,11 @@ let singlePinchTrans = {
     rotate:0,
 };
 let $singlePinch = $('.js-singlePinch-el');
-new MTouch({
-    receiver:'.js-singlePinch-el',
-    singlePinch:{
-        pinch(ev){
-            singlePinchTrans.scale *= ev.delta.scale;
-            set($singlePinch,singlePinchTrans);
-        },
-        buttonId:'js-singlePinch',
-    },
-});
+// let $active = $('.js-singlePinch-el-0');
+MT('.singlePinch').on('singlePinch',(ev)=>{
+    singlePinchTrans.scale *= ev.delta.scale;
+    set($singlePinch,singlePinchTrans);
+},'.js-singlePinch-el');
 
 // singleRotate;
 let singleRotateTrans = {
@@ -104,19 +114,15 @@ let singleRotateTrans = {
     rotate:0,
 };
 let $singleRotate = $('.js-singleRotate-el');
-new MTouch({
-    receiver:'.js-singleRotate-el',
-    singleRotate:{
-        rotate(ev){
-            singleRotateTrans.rotate += ev.delta.rotate;
-            set($singleRotate,singleRotateTrans);
-        },
-        buttonId:'js-singleRotate',
-    },
-});
+MT('.singleRotate').on('singleRotate',ev=>{
+    singleRotateTrans.rotate += ev.delta.rotate;
+    set($singleRotate,singleRotateTrans);
+},'.js-singleRotate-el');
 
 function set($el,transform){
     window.requestAnimFrame(()=>{
         $el.css('transform',`translate3d(${transform.x}px,${transform.y}px,0px) rotate(${transform.rotate}deg) scale(${transform.scale})`);
     });
 }
+//
+//
