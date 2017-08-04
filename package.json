@@ -1,7 +1,7 @@
 {
   "name": "@meitu/mtouch",
   "version": "3.0.3",
-  "description": "Mobile Touch Library",
+  "description": "Mobile Touch Library that contain drag/pinch/rotate/singlePinch/singleRotate gesture。",
   "main": "dist/mtouch.js",
   "module": "dist/mtouch.es.js",
   "moduleName": "MTouch",
