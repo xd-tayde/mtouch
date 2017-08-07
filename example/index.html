@@ -17,7 +17,8 @@
         .title{
             color: rgb(46,104,170);
             text-align: center;
-            line-height: 80px;
+            line-height: 50px;
+            margin-top: 30px;
         }
         .wrap{
             width: 100%;
@@ -69,32 +70,38 @@
             background-image:url(images/pinch.png);
             display: none;
         }
+        .subtitle{
+            color: rgb(241,124,103);
+            text-align: center;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
     <h1 class="title">MTouch.js</h1>
+    <h4 class="subtitle">(please use in mobile or device mode!)</h4>
     <div class="wrap">
         <div class="js-area area drag">
-            拖放(drag)
+            all gesture
             <div class="el js-drag-el a" style="left:70%;top:50%;"></div>
             <div class="el js-drag-el b active" style="left:30%;top:50%;"></div>
         </div>
         <div class="area pinch">
-            双指缩放(pinch)
+            pinch
             <div class="el js-pinch-el"></div>
         </div>
         <div class="area rotate">
-            双指旋转(rotate)
+            rotate
             <div class="el js-rotate-el"></div>
         </div>
         <div class="area singlePinch">
-            单指缩放(singlePinch)
+            singlePinch
             <div class="el js-singlePinch-el js-singlePinch-el">
                 <!-- <div class="single js-singlePinch"></div> -->
             </div>
         </div>
         <div class="area singleRotate">
-            单指旋转(singleRotate)
+            singleRotate
             <div class="el js-singleRotate-el">
                 <!-- <div class="single js-singleRotate"></div> -->
             </div>

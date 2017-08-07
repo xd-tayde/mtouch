@@ -37,7 +37,7 @@ mt.on('drag',(ev)=>{
         dragTrans.rotate += ev.delta.rotate;
         set($drag,dragTrans);
     }
-}).switch('.b',false);
+}).switch('.b',true);
 
 $drags.on('click',function(e){
     freeze = false;
