@@ -2,8 +2,6 @@
 
 > [demo](http://f2er.meitu.com/gxd/mtouch/example/index.html)
 
-> [git](https://gitlab.meitu.com/npm/meitu-mtouch)
-
 > [download](http://f2er.meitu.com/gxd/mtouch/dist/mtouch.min.js)
 
 ### Change Log
