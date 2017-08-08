@@ -1,5 +1,4 @@
-# MTouch通用移动端手势库
-
+# MTouch.js
 > [demo](http://f2er.meitu.com/gxd/mtouch/example/index.html)
 
 > [download](http://f2er.meitu.com/gxd/mtouch/dist/mtouch.min.js)
