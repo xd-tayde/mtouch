@@ -1,12 +1,25 @@
-# MTouch通用移动端手势库
+# MTouch.js
 
 > [demo](http://f2er.meitu.com/gxd/mtouch/example/index.html)
 
-> [git](https://gitlab.meitu.com/npm/meitu-mtouch)
-
-> [download](http://f2er.meitu.com/gxd/mtouch/dist/mtouch.min.js)
+> [github](https://github.com/xd-tayde/mtouch)
 
 ### Change Log
+
+- 3.0.4
+	- `singlePinch`抛出的事件对象中增加两个增量参数:
+
+		```js
+			ev = {
+				origin: TouchEvent,
+				delta:{
+					scale:1,
+					deltaX:1,  // x轴方向上的运动增量
+					deltaY:1,	 // y轴方向上的运动增量
+				}，
+				eventType:'singlePinch',
+			}
+		```
 
 - 3.0.3
 	- 为 `switch` 方法增加 `addButton` 参数，便于外部更精准灵活地控制按钮的添加；
@@ -39,6 +52,14 @@
 	- 调整单指缩放和单指旋转的使用方式，更为清晰，方便；
 	- 新增对一些错误用法的容错和提示；
 
+## Installation
+
+You can download the latest version from the [GitHub](https://github.com/xd-tayde/mtouch/blob/master/dist/mtouch.min.js) or use a npm [CDN](https://unpkg.com/mtouch@3.0.4/dist/mtouch.min.js).
+
+Or you can install via npm:
+
+    npm install mtouch --save
+
 ### Introduction
 
 该手势库是以我们业务中常用的贴纸类型做为基础，进行进一步的封装抽象，更贴近我们业务，更加便于使用，更加轻量以及有更好的业务定制性，大家有业务上的需求时，可随时联系我；该库去除了一些比较少用到的手势，使代码更加精简和轻量，没有依赖，压缩后大小为9K；
@@ -51,7 +72,7 @@
 > 4. **单指缩放**：`singlePinch`
 > 5. **单指旋转**：`singleRotate`
 
-#### 事件类型：
+#### Event
 
 ```js
 	EVENT = [

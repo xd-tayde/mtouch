@@ -1,7 +1,8 @@
 {
-  "name": "@meitu/mtouch",
-  "version": "3.0.3",
+  "name": "mtouch",
+  "version": "3.0.4",
   "description": "Mobile Touch Library that contain drag/pinch/rotate/singlePinch/singleRotate gesture。",
+  "keywords":["touch","hammer","finger","sticker","gesture","mtouch","drag","pinch","rotate","singlepinch","singlerotate"],
   "main": "dist/mtouch.js",
   "module": "dist/mtouch.es.js",
   "moduleName": "MTouch",
@@ -15,7 +16,7 @@
     "lint": "eslint src"
   },
   "repository": {
-    "url": "https://gitlab.meitu.com/npm/meitu-mtouch.git",
+    "url": "https://github.com/xd-tayde/mtouch",
     "type": "git"
   },
   "author": "gxd <gxd@meitu.com>",

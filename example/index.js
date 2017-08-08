@@ -7,6 +7,10 @@ window.requestAnimFrame = (function() {
     };
 })();
 
+if(!isMobile()){
+    $('.js-mask').show();
+}
+
 // drag;
 let dragTrans = {
     x:0,
@@ -100,10 +104,20 @@ let singlePinchTrans = {
     rotate:0,
 };
 let $singlePinch = $('.js-singlePinch-el');
+// let $singlePinchWidth = $singlePinch.width();
+// let $singlePinchHeight = $singlePinch.height();
 // let $active = $('.js-singlePinch-el-0');
 MT('.singlePinch').on('singlePinch',(ev)=>{
+    console.log(ev);
+    // $singlePinchWidth += ev.delta.deltaX;
+    // $singlePinchHeight += ev.delta.deltaY;
+    // console.log($singlePinchWidth,$singlePinchHeight);
     singlePinchTrans.scale *= ev.delta.scale;
     set($singlePinch,singlePinchTrans);
+    // $singlePinch.css({
+    //     width:$singlePinchWidth + 'px',
+    //     height:$singlePinchHeight + 'px',
+    // });
 },'.js-singlePinch-el');
 
 // singleRotate;
@@ -124,5 +138,19 @@ function set($el,transform){
         $el.css('transform',`translate3d(${transform.x}px,${transform.y}px,0px) rotate(${transform.rotate}deg) scale(${transform.scale})`);
     });
 }
-//
-//
+
+function isMobile() {
+   if( navigator.userAgent.match(/Android/i)
+   || navigator.userAgent.match(/webOS/i)
+   || navigator.userAgent.match(/iPhone/i)
+   || navigator.userAgent.match(/iPad/i)
+   || navigator.userAgent.match(/iPod/i)
+   || navigator.userAgent.match(/BlackBerry/i)
+   || navigator.userAgent.match(/Windows Phone/i)
+   ){
+       return true;
+   }
+   else {
+       return false;
+   }
+}

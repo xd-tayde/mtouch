@@ -139,6 +139,8 @@ MTouch.prototype._move = function(ev) {
             this._eventFire('singlePinch', {
                 delta: {
                     scale: singlePinchLength / this.singlePinchStartLength,
+                    deltaX:curPoint.x - this.startPoint.x,
+                    deltaY:curPoint.y - this.startPoint.y,
                 },
                 origin: ev,
             });
