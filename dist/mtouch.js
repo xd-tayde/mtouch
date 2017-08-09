@@ -6,6 +6,7 @@
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+var sheet = void 0;
 var _ = {
     getLength: function getLength(v1) {
         if ((typeof v1 === 'undefined' ? 'undefined' : _typeof(v1)) !== 'object') {
@@ -162,8 +163,23 @@ var _ = {
             };
         }
         return JSON.parse(el.getAttribute('data-mtouch-status')) || defaulTrans;
+    },
+    addCssRule: function addCssRule(selector, rules) {
+        if (!sheet) {
+            sheet = createStyleSheet();
+        }
+        sheet.insertRule(selector + '{' + rules + '}', sheet.rules.length);
     }
 };
+
+function createStyleSheet() {
+    var style = document.createElement('style');
+    style.type = 'text/css';
+    document.head.appendChild(style);
+    return style.sheet;
+}
+
+var base64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyppVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTMyIDc5LjE1OTI4NCwgMjAxNi8wNC8xOS0xMzoxMzo0MCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTUuNSAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo3QUY3RkU4M0E5OEIxMUU2QjU0QTkxRjBDMUE2RDg3NCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo3QUY3RkU4NEE5OEIxMUU2QjU0QTkxRjBDMUE2RDg3NCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjdBRjdGRTgxQTk4QjExRTZCNTRBOTFGMEMxQTZEODc0IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjdBRjdGRTgyQTk4QjExRTZCNTRBOTFGMEMxQTZEODc0Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+ckj5SQAAA5tJREFUeNrsm0tIVUEYx7+TSuHVIk2sjfTQTaQLo425KXq3yF7gwrASwozKVmG0DNoElUQgYRQECT0JKum1SjeRkFaLnuAmpCxIrxkit//X/W7dpOu9Z+acmSOeD34oepn5fs6Z15nRicViNJ1iBk2zCIVD4VB4akd2ql/UnvGk/CJQBSpBKVgE5oE8+f0w+AI+gnegB3TJz7Sio9mlsEYUgO1COXAm+WyesBCskp/xPNkHbghfjbSwQhSDw/xwgFka5fAfqEJoAVdBKxgISh/OAU3gKditKTsxuKw9UnaT1GVVmPvkXXAcRHwcayJSx31QZkt4HegEywwOskvBPanbqHA9aAf5FmaWiNRdb0q4DpwEWRan0yzJoc5v4Q1SUVCCc1nvlzAPUGctt+z/WrpVcvNUmKeDNkt9Nl3kS27ZXgrvNzwauw3ObZ9XK635oDmDteuCdJ+5/YyGOrp+r5/9iCOyFB3QbeFGL1ZPPssmpqtG3Ue6QGXotyCbiF1gro7wDpCrKTtsSJYk1506wtu0n7OZ5DhmB7CtqsJFsp/VirUVFNm7mmYblK6QlwyuhavSbN4n7bMPeylqSdqR3F1PS5U6A5STJJv89eIT+m7g1f9ycMdtC5epyibe07CcpZYuVXmkS3SnHovSJSrChW5qSDX1WJIuVBHO9ar2hPSjPmPSuX684nEt3f7YqLRr4ZEpLD2iIjwYlJauXel6Hz6oItwfhMebZWtW/DmayTT6VYTf2u7TirIc71RWWj2mBjL+fk35vyuy6E+KKcpyPFcR7pacHFvSGkV2qzzSnyl+imdlytKIXprkuDXdPHzT5DwdHSUv9hW3dF4AXAc/TAjzALVFvc8mgnO9piPMh9EdJmRr9GVJcv2mI8xxDoxOAVnu/63pPpTJe+lPFD9iOeqHMHZZvK0c8qCo05TBLYFMNw/nwWsKbrwCF3Q3D8kxRvErB9EAynJOByRHz4Q53oBDYDxAspzLQcmNvBbm4DsWLQES5lw6vdoPp4orUtG45ZZtkVzIb2GOy6CByNgRysQ+2yA5kClhjgcUvwLx0qAszxSbpG4yLczxAWwGJ3wewaNSx0bdfboXL/HGZJ6uBpc8XpWNSpnVUseYboFe3rXkVc4xcIriR5Z8ipfucmmqjVOv7NQCfbk0ecPRJhRL6/CJ3hKwGMyh+A3aHPp7fZi7xnvwguLXhwf86htO+F8toXAoHAqHwgGOXwIMAGwpGJYKZlZqAAAAAElFTkSuQmCC";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -250,6 +266,8 @@ function MTouch() {
     this.vector1 = {};
     this.singleBasePoint = {};
 
+    // 插入css;
+    this._css();
     // 初始化注册事件队列；
     this._driveBus();
     // 监听原生 touch 事件；
@@ -439,17 +457,12 @@ MTouch.prototype._eventEnd = function (evName, ev) {
 // 添加 button 区域；
 // 背景样式由业务方定制；
 MTouch.prototype._addButton = function (el) {
-    var _$domify = _.domify('<div class="mtouch-singleButton" data-singleButton=\'true\' style=\'position:absolute;right:-15px;bottom: -15px;width:30px;height: 30px;background-size: 100% 100%;\'></div>'),
+    var _$domify = _.domify('<div class="mtouch-singleButton" data-singleButton=\'true\'></div>'),
         _$domify2 = _slicedToArray(_$domify, 1),
-        button = _$domify2[0],
-        _style = void 0;
+        button = _$domify2[0];
 
     el.appendChild(button);
     el.setAttribute('data-mtouch-addButton', true);
-    if (getComputedStyle && window.getComputedStyle(el, null).position === 'static') {
-        _style = el.style || '';
-        el.style = _style + 'position:relative';
-    }
 };
 // 切换 operator;
 MTouch.prototype.switch = function (el) {
@@ -487,6 +500,10 @@ MTouch.prototype._on = function (evName, handler, operator) {
 };
 MTouch.prototype.off = function (evName, handler) {
     this[evName].del(handler);
+};
+
+MTouch.prototype._css = function () {
+    _.addCssRule('.mtouch-singleButton', 'position:absolute;right:-15px;bottom: -15px;width:30px;height: 30px;background-size: 100% 100%;background-image:url(' + base64 + ');');
 };
 
 return MTouch;

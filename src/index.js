@@ -1,4 +1,5 @@
 import _ from './utils';
+import singleBtn from './singleBtn';
 import HandlerBus from './handlerBus';
 
 const EVENT = ['touchstart','touchmove','touchend','drag','dragstart','dragend','pinch','pinchstart','pinchend','rotate','rotatestart','rotatend','singlePinchstart','singlePinch','singlePinchend','singleRotate','singleRotatestart','singleRotatend'];
@@ -31,6 +32,8 @@ export default function MTouch(el = '') {
     this.vector1 = {};
     this.singleBasePoint = {};
 
+    // 插入css;
+    this._css();
     // 初始化注册事件队列；
     this._driveBus();
     // 监听原生 touch 事件；
@@ -212,14 +215,9 @@ MTouch.prototype._eventEnd = function(evName, ev) {
 // 添加 button 区域；
 // 背景样式由业务方定制；
 MTouch.prototype._addButton = function(el){
-    let [button] = _.domify(`<div class="mtouch-singleButton" data-singleButton='true' style='position:absolute;right:-15px;bottom: -15px;width:30px;height: 30px;background-size: 100% 100%;'></div>`),
-        _style;
+    let [button] = _.domify(`<div class="mtouch-singleButton" data-singleButton='true'></div>`);
     el.appendChild(button);
     el.setAttribute('data-mtouch-addButton',true);
-    if(getComputedStyle && window.getComputedStyle(el,null).position === 'static'){
-        _style = el.style || '';
-        el.style = _style + 'position:relative';
-    }
 };
 // 切换 operator;
 MTouch.prototype.switch = function(el,addButton = true) {
@@ -250,4 +248,8 @@ MTouch.prototype._on = function(evName,handler,operator){
 };
 MTouch.prototype.off = function(evName, handler) {
     this[evName].del(handler);
+};
+
+MTouch.prototype._css = function(){
+    _.addCssRule('.mtouch-singleButton',`position:absolute;right:-15px;bottom: -15px;width:30px;height: 30px;background-size: 100% 100%;background-image:url(${singleBtn});`);
 };

@@ -1,3 +1,4 @@
+let sheet;
 export default {
     getLength(v1) {
         if (typeof v1 !== 'object') {
@@ -153,4 +154,17 @@ export default {
         }
         return JSON.parse(el.getAttribute('data-mtouch-status')) || defaulTrans;
     },
+    addCssRule(selector, rules){
+        if(!sheet){
+            sheet = createStyleSheet();
+        }
+        sheet.insertRule(`${selector}{${rules}}`,sheet.rules.length);
+    },
 };
+
+function createStyleSheet() {
+    let style = document.createElement('style');
+    style.type = 'text/css';
+    document.head.appendChild(style);
+    return style.sheet;
+}
