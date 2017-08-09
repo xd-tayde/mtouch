@@ -6,6 +6,9 @@
 
 ### 更新日志
 
+- 3.0.6
+	- 修复了数组结构语法导致的ios报错问题；
+
 - 3.0.5
 	- 增加内嵌`css`，内置`base64`缩放按钮图标；
 	- 更新英文版文档；
@@ -101,7 +104,7 @@
 
 - 使用npm官方的[CDN](https://unpkg.com/mtouch@3.0.4/dist/mtouch.min.js)；
 
-- 直接使用npm安装： 
+- 直接使用npm安装：
 
 ```js
 npm install mtouch --save

@@ -215,7 +215,7 @@ MTouch.prototype._eventEnd = function(evName, ev) {
 // 添加 button 区域；
 // 背景样式由业务方定制；
 MTouch.prototype._addButton = function(el){
-    let [button] = _.domify(`<div class="mtouch-singleButton" data-singleButton='true'></div>`);
+    let button = _.domify(`<div class="mtouch-singleButton" data-singleButton='true'></div>`)[0];
     el.appendChild(button);
     el.setAttribute('data-mtouch-addButton',true);
 };

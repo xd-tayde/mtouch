@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>example</title>
     <style>
@@ -54,13 +54,9 @@
         .el.active .mtouch-singleButton{
             display: inline-block;
         }
-        /*.mtouch-singleButton{
-            background-image:url(images/pinch.png);
-        }
         .js-drag-el .mtouch-singleButton{
-            background-image:url(images/pinch.png);
             display: none;
-        }*/
+        }
         .subtitle{
             color: rgb(241,124,103);
             text-align: center;
@@ -87,7 +83,6 @@
 <body>
     <div class="mask js-mask">please open in the mobile or use the device mode of browser!</div>
     <h1 class="title">MTouch.js</h1>
-    <h4 class="subtitle">(please use in mobile or device mode!)</h4>
     <div class="wrap">
         <div class="js-area area drag">
             all gesture
@@ -116,6 +111,6 @@
         </div>
     </div>
     <script src="./zepto.min.js"></script>
-    <script src="./dist/example.js"></script>
+    <script src="./dist/example.js?1"></script>
 </body>
 </html>

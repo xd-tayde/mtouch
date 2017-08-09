@@ -8,7 +8,7 @@
 
 **[中文版](./README_ZH.md)**
 
-MTouch is a modern JavaScript mobile touch gesture library. It's simple, convenient and only 9k. 
+MTouch is a modern JavaScript mobile touch gesture library. It's simple, convenient and only 9k.
 
 The library support 5 kinds of gesture.
 
@@ -18,7 +18,7 @@ The library support 5 kinds of gesture.
 - **singlePinch**
 - **singleRotate**
 
-> Tips:Single finger operation is so useful as practice confirms. 
+> Tips:Single finger operation is so useful as practice confirms.
 
 ### event
 
@@ -109,16 +109,16 @@ Switch the operator to change the basepoint that will be used in singlePinch or 
 params:
 
 	// the element want to operate;
-	el: type: string or HTMLElement, 
+	el: type: string or HTMLElement,
 		optional;
 		default: the el on create the instance;
-		
-		
+
+
 	// whether you want to add a button when use single gesture.
-	addButton: type: boolean, 
-				 optional, 
+	addButton: type: boolean,
+				 optional,
 				 default:true;
-				 
+
 #### 2.`on/off`
 
 `mtouch.on(evName,handle,operator) / mtouch.off(evName,handler)`;
@@ -150,4 +150,3 @@ ev = {
 `mtouch.destroy()`;
 
 unbind all the event that has band on el;
-				

@@ -31,17 +31,22 @@ mt.on('drag',(ev)=>{
         dragTrans.y += ev.delta.deltaY;
         set($drag,limit(wrap,$drag[0],dragTrans));
     }
-}).on('pinch singlePinch',ev=>{
+});
+
+mt.on('pinch singlePinch',ev=>{
     if(!freeze){
         dragTrans.scale *= ev.delta.scale;
         set($drag,dragTrans);
     }
-}).on('rotate singleRotate',ev=>{
+});
+mt.on('rotate singleRotate',ev=>{
     if(!freeze){
         dragTrans.rotate += ev.delta.rotate;
         set($drag,dragTrans);
     }
-}).switch('.b',true);
+});
+
+mt.switch('.b',true);
 
 $drags.on('click',function(e){
     freeze = false;
@@ -57,7 +62,6 @@ $(wrap).on('click',function(){
     mt.switch(null);
     freeze = true;
 });
-
 function limit(wrap,el,trans){
     let bounce = 40;
     let minX = - el.offsetLeft - bounce;

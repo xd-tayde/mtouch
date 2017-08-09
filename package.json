@@ -1,6 +1,6 @@
 {
   "name": "mtouch",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "description": "Mobile Touch Library that contain drag/pinch/rotate/singlePinch/singleRotate gesture。",
   "keywords":["touch","hammer","finger","sticker","gesture","mtouch","drag","pinch","rotate","singlepinch","singlerotate"],
   "main": "dist/mtouch.js",
