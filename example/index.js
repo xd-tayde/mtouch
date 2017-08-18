@@ -112,7 +112,6 @@ let $singlePinch = $('.js-singlePinch-el');
 // let $singlePinchHeight = $singlePinch.height();
 // let $active = $('.js-singlePinch-el-0');
 MT('.singlePinch').on('singlePinch',(ev)=>{
-    console.log(ev);
     // $singlePinchWidth += ev.delta.deltaX;
     // $singlePinchHeight += ev.delta.deltaY;
     // console.log($singlePinchWidth,$singlePinchHeight);

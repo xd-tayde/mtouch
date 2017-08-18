@@ -492,7 +492,7 @@ MTouch.prototype.off = function (evName, handler) {
 };
 
 MTouch.prototype._css = function () {
-    _.addCssRule('.mtouch-singleButton', 'position:absolute;right:-15px;bottom: -15px;width:30px;height: 30px;background-size: 100% 100%;background-image:url(' + base64 + ');');
+    _.addCssRule('.mtouch-singleButton', 'z-index:9999;position:absolute;right:-15px;bottom: -15px;width:30px;height: 30px;background-size: 100% 100%;background-image:url(' + base64 + ');');
 };
 
 export default MTouch;

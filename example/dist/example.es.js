@@ -492,7 +492,7 @@ MTouch.prototype.off = function (evName, handler) {
 };
 
 MTouch.prototype._css = function () {
-    _.addCssRule('.mtouch-singleButton', 'position:absolute;right:-15px;bottom: -15px;width:30px;height: 30px;background-size: 100% 100%;background-image:url(' + base64 + ');');
+    _.addCssRule('.mtouch-singleButton', 'z-index:9999;position:absolute;right:-15px;bottom: -15px;width:30px;height: 30px;background-size: 100% 100%;background-image:url(' + base64 + ');');
 };
 
 window.requestAnimFrame = function () {
@@ -606,7 +606,6 @@ var $singlePinch = $('.js-singlePinch-el');
 // let $singlePinchHeight = $singlePinch.height();
 // let $active = $('.js-singlePinch-el-0');
 MTouch('.singlePinch').on('singlePinch', function (ev) {
-    console.log(ev);
     // $singlePinchWidth += ev.delta.deltaX;
     // $singlePinchHeight += ev.delta.deltaY;
     // console.log($singlePinchWidth,$singlePinchHeight);
