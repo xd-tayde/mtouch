@@ -150,3 +150,7 @@ ev = {
 `mtouch.destroy()`;
 
 unbind all the event that has band on el;
+
+### License
+
+[MIT](https://opensource.org/licenses/MIT)
